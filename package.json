@@ -1,0 +1,19 @@
+{
+  "name": "aether",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "react-force-graph-3d": "^1.29.1",
+    "three": "^0.182.0",
+    "tsx": "^4.21.0"
+  }
+}

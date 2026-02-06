@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AETHER | Neural Graph</title>
+    <style>
+      body { margin: 0; background: #000; overflow: hidden; font-family: 'Inter', sans-serif; }
+      #root { width: 100vw; height: 100vh; }
+      .ui-overlay {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: #00f2ff;
+        pointer-events: none;
+        text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+      }
+      .ui-overlay h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+      .ui-overlay p { margin: 5px 0; opacity: 0.7; font-size: 0.8rem; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div class="ui-overlay">
+      <h1>PROJECT AETHER</h1>
+      <p>Neural Map v1.0.0</p>
+      <div id="stats"></div>
+    </div>
+    <script type="module" src="/src/ui/main.tsx"></script>
+  </body>
+</html>

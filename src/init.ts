@@ -1,19 +1,26 @@
 import { AetherBrain } from "./brain";
+import { SqliteProvider } from "./providers/sqlite";
+import path from "path";
 
 async function main() {
-  const brain = new AetherBrain();
+  // Initialize with SQLite Provider
+  const dbPath = path.join(__dirname, "../aether.db");
+  const storage = new SqliteProvider(dbPath);
+  const brain = new AetherBrain(storage);
 
-  console.log("Initializing AETHER neural pathways...");
+  await brain.init();
 
-  // Learning from our recent dashboard refactor
-  await brain.activate("Dashboard", "Mobile-UI", 1.5);
-  await brain.activate("Synapse", "D3-Force", 2.0);
-  await brain.activate("0xMiles", "Cortex", 1.2);
-  await brain.activate("0xMiles", "GitHub", 0.8);
-  await brain.activate("Moltbook", "Social-Strategy", 1.1);
+  console.log("[AETHER] Learning from environment...");
+
+  // Registering initial concept relationships
+  await brain.activate("Core", "Strategy", 2.0);
+  await brain.activate("Core", "Logic", 2.0);
+  await brain.activate("Execution", "Shell", 1.5);
+  await brain.activate("AETHER", "3D-Visualization", 3.0);
+  await brain.activate("0xMiles", "Héricles", 5.0);
 
   const map = await brain.getNeuralMap();
-  console.log(`[AETHER] Neural map contains ${map.nodes.length} neurons and ${map.links.length} synapses.`);
+  console.log(`[AETHER] State: ${map.nodes.length} concepts connected via ${map.links.length} synapses.`);
 }
 
 main().catch(console.error);

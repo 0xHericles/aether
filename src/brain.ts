@@ -1,54 +1,46 @@
-import Database from "better-sqlite3";
-import path from "path";
-
-const DB_PATH = path.join(__dirname, "../aether.db");
-const db = new Database(DB_PATH);
-
-interface Synapse {
-  source: string;
-  target: string;
-  weight: number;
-}
+import { AetherStorage, AetherNeuralMap } from "./types";
 
 /**
  * AETHER Brain
- * Manages the self-learning neural graph.
+ * The core engine that manages the self-learning neural graph.
  */
 export class AetherBrain {
-  /**
-   * Activates a connection between two context nodes.
-   * If the connection exists, its weight increases.
-   */
-  async activate(source: string, target: string, strength = 0.1) {
-    const stmt = db.prepare(`
-      INSERT INTO synapses (source, target, weight, last_activated)
-      VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(source, target) DO UPDATE SET
-        weight = weight + ?,
-        last_activated = CURRENT_TIMESTAMP
-    `);
-    
-    // Sort to ensure undirected consistency
-    const [s, t] = [source, target].sort();
-    stmt.run(s, t, strength, strength);
-    console.log(`[AETHER] Synapse activated: ${s} <-> ${t}`);
+  private storage: AetherStorage;
+
+  constructor(storage: AetherStorage) {
+    this.storage = storage;
+  }
+
+  async init() {
+    await this.storage.init();
+    console.log("[AETHER] Core initialized.");
   }
 
   /**
-   * Gets the neural map for 3D rendering.
+   * Activates a connection between two context nodes.
    */
-  async getNeuralMap() {
-    const rows = db.prepare("SELECT * FROM synapses WHERE weight > 0.5").all() as any[];
-    const nodes = new Set<string>();
-    const links = rows.map(r => {
-      nodes.add(r.source);
-      nodes.add(r.target);
-      return { source: r.source, target: r.target, weight: r.weight };
-    });
+  async activate(source: string, target: string, strength = 0.1) {
+    await this.storage.activate(source, target, strength);
+  }
 
-    return {
-      nodes: Array.from(nodes).map(id => ({ id, label: id })),
-      links
-    };
+  /**
+   * Gets the current neural map for 3D visualization.
+   */
+  async getNeuralMap(): Promise<AetherNeuralMap> {
+    return this.storage.getNeuralMap();
+  }
+
+  /**
+   * Semantic Discovery: Finds the most relevant context nodes
+   * for a given seed, following the strongest synapses.
+   */
+  async getContextPackage(seed: string, options = { depth: 1, limit: 5 }) {
+    const map = await this.storage.getNeuralMap();
+    // Logic to traverse and pick strongest neighbors
+    const synapses = map.links.filter(l => l.source === seed || l.target === seed);
+    return synapses
+      .sort((a, b) => b.weight - a.weight)
+      .slice(0, options.limit)
+      .map(l => l.source === seed ? l.target : l.source);
   }
 }
